@@ -15,17 +15,19 @@ import Trending from "@/components/Trending";
 import EmptyComponent from "@/components/EmptyComponent";
 import { getVideos } from "@/lib/appwrite";
 import useData from "@/hooks/useData";
-
+import VideoCard from "@/components/VideoCard";
 
 const Home = () => {
   const [refreshing, setRefreshing] = useState(false);
-  const {data,error,loading} = useData(getVideos);
+  const { data, loading, refetch } = useData(getVideos);
 
   const onRefresh = async () => {
     setRefreshing(true);
-    //seee any new videoes
+    await refetch()
     setRefreshing(false);
   };
+
+  console.log(data)
 
   return (
     <SafeAreaView className='bg-primary h-full'>
@@ -33,7 +35,7 @@ const Home = () => {
         data={data}
         // keyExtractor={(item) => console.log(item)}
         renderItem={({ item }) => (
-          <Text className='text-white text-3xl'>Title</Text>
+          <VideoCard posts={item} />
         )}
         ListHeaderComponent={() => (
           <View className='my-6 px-4 space-y-4'>
@@ -60,7 +62,7 @@ const Home = () => {
               <Text className='text-gray-100 text-lg font-pregular mb-3'>
                 Latest videos
               </Text>
-              <Trending posts={data} />
+              {/* <Trending posts={data} /> */}
             </View>
           </View>
         )}
