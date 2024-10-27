@@ -1,10 +1,11 @@
 import { View, Text, Image, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
 import { icons } from "../constants/index"
+import { ResizeMode, Video } from 'expo-av';
 
 const VideoCard = ({ posts: { title, video, thumbnail, creator: { username, avatarURL } } }) => {
     const [playing, setPlaying] = useState(false);
-    
+
     return (
         <View className="flex-col items-center px-4 mb-14">
             <View className="flex-row gap-3 items-start">
@@ -22,7 +23,13 @@ const VideoCard = ({ posts: { title, video, thumbnail, creator: { username, avat
                 </View>
             </View>
             {playing ? (
-                <Text className="text-white">Playing</Text>
+                <Video source={{ uri: video }} className="w-52 h-72 rounded-[33px] mt-3 bg-white/10" resizeMode={ResizeMode.CONTAIN} useNativeControls shouldPlay
+                    onPlaybackStatusUpdate={(status) => {
+                        if (status.didJustFinish) {
+                            setPlaying(false)
+                        }
+                    }}
+                />
             ) : (
                 <TouchableOpacity
                     activeOpacity={0.6}
