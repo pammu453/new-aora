@@ -26,8 +26,6 @@ const SignIn = () => {
 
       // set it to globel state
 
-      console.log(result);
-
       router.replace("/home");
 
     } catch (error) {

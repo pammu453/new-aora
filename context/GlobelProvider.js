@@ -11,7 +11,6 @@ const GlobelProvider = ({ children }) => {
     useEffect(() => {
         getCurrentUser()
             .then((data) => {
-                console.log("Data", data)
                 if (data) {
                     setIsLoggedIn(true)
                     setUser(data)
