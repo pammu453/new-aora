@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -16,11 +16,13 @@ import EmptyComponent from "@/components/EmptyComponent";
 import { getVideos, getLatestVideos } from "@/lib/appwrite";
 import useData from "@/hooks/useData";
 import VideoCard from "@/components/VideoCard";
+import { GlobelContext } from "../../context/GlobelProvider";
 
 const Home = () => {
   const [refreshing, setRefreshing] = useState(false);
   const { data: posts, refetch } = useData(getVideos);
   const { data: latestPosts } = useData(getLatestVideos);
+  const { user } = useContext(GlobelContext)
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -44,7 +46,7 @@ const Home = () => {
                   Welcome Back
                 </Text>
                 <Text className='text-3xl font-psemibold text-white'>
-                  Pramod
+                  {user?.username}
                 </Text>
               </View>
 

@@ -23,13 +23,22 @@ const VideoCard = ({ posts: { title, video, thumbnail, creator: { username, avat
                 </View>
             </View>
             {playing ? (
-                <Video source={{ uri: video }} className="w-52 h-72 rounded-[33px] mt-3 bg-white/10" resizeMode={ResizeMode.CONTAIN} useNativeControls shouldPlay
-                    onPlaybackStatusUpdate={(status) => {
-                        if (status.didJustFinish) {
-                            setPlaying(false)
-                        }
-                    }}
-                />
+                <View className='w-full h-60 rounded-xl mt-3'>
+                    <Video
+                        source={{ uri: video }}
+                        style={{ width: '100%', height: '100%', borderRadius: 20 }}
+                        resizeMode={ResizeMode.COVER}
+                        useNativeControls
+                        shouldPlay
+                        isLooping
+                        onPlaybackStatusUpdate={(status) => {
+                            if (status.didJustFinish) {
+                                setPlaying(false);
+                            }
+                        }}
+                        onError={(e) => console.log("Video error:", e)}
+                    />
+                </View>
             ) : (
                 <TouchableOpacity
                     activeOpacity={0.6}
@@ -37,7 +46,8 @@ const VideoCard = ({ posts: { title, video, thumbnail, creator: { username, avat
                     className="w-full h-60 rounded-xl mt-3 relative justify-center items-center" >
                     <Image source={{ uri: thumbnail }} className="w-full h-full rounded-xl mt-3" resizeMode='cover' />
                     <Image source={icons.play} className="w-12 h-12 absolute" resizeMode='contain' />
-                </TouchableOpacity>)
+                </TouchableOpacity>
+            )
             }
         </View>
     )

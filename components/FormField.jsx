@@ -13,7 +13,7 @@ const FormField = ({
 
   return (
     <View className={`space-y-2  ${otherStyles}`}>
-      <Text className='text-white text-lg'>{title}</Text>
+      <Text className='text-white text-lg mb-2 font-pregular'>{title}</Text>
       <TextInput
         value={value}
         placeholder={placeHolderText}
