@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, Image, Alert } from "react-native";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 
@@ -8,23 +8,29 @@ import FormField from "@/components/FormField";
 import CustomButton from "@/components/CustomButton";
 import { Link, router } from "expo-router";
 import { logIn } from "@/lib/appwrite";
+import { GlobelContext } from "../../context/GlobelProvider";
+import { getCurrentUser } from "../../lib/appwrite";
 
 const SignIn = () => {
+  const { setUser, setIsLoggedIn } = useContext(GlobelContext)
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
   const [loading, setLoading] = useState(false);
 
-  const onSubmite = () => {
+  const onSubmite = async () => {
     if (!form.password || !form.email) {
       return Alert.alert("Error", "Please fill in all the fields");
     }
     setLoading(true);
     try {
-      const result = logIn(form.email, form.password);
+      await logIn(form.email, form.password);
 
       // set it to globel state
+      const user = await getCurrentUser()
+      setIsLoggedIn(true)
+      setUser(user)
 
       router.replace("/home");
 
