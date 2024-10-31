@@ -1,15 +1,18 @@
 import { View, Text, ScrollView, TouchableOpacity, Image, Alert } from 'react-native'
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import FormField from '../../components/FormField'
 import CustomButton from '../../components/CustomButton'
 import { Video } from 'expo-av'
 import { icons } from '../../constants/index'
 import * as DocumentPicker from 'expo-document-picker';
-import { router } from 'expo-router'
+import { router } from 'expo-router';
+import { createVideo } from '../../lib/appwrite.js';
+import { GlobelContext } from '../../context/GlobelProvider.js'
 
 const Create = () => {
   const [uploading, setUpLoading] = useState(false);
+  const { user } = useContext(GlobelContext)
 
   const [form, setForm] = useState({
     title: '',
@@ -39,7 +42,7 @@ const Create = () => {
 
   console.log(form)
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     if (!form.title || !form.thumbnail || !form.video || !form.prompt) {
       return Alert.alert("Error", "All fields e required!")
     }
@@ -47,6 +50,10 @@ const Create = () => {
 
     try {
       //appwrite video upload
+      await createVideo({
+        ...form,
+        userId: user.$id
+      })
 
       Alert.alert("Success", "Post uploaded succefully")
       router.push("/home")
