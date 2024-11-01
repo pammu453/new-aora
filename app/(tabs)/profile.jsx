@@ -1,17 +1,18 @@
-import { View, Text, Image, FlatList, StatusBar, TouchableOpacity } from 'react-native'
-import React, { useContext } from 'react'
+import { View, Text, Image, FlatList, StatusBar, TouchableOpacity, Alert } from 'react-native'
+import React, { useContext, useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import useData from '../../hooks/useData'
 import EmptyComponent from '../../components/EmptyComponent'
 import VideoCard from '../../components/VideoCard'
-import { currentUserPosts, signOut } from '../../lib/appwrite'
+import { currentUserPosts, deletePost, signOut } from '../../lib/appwrite'
 import { GlobelContext } from '../../context/GlobelProvider'
 import { icons } from '../../constants'
 import { router } from 'expo-router'
 
 const Profile = () => {
   const { user, setUser, setIsLoggedIn } = useContext(GlobelContext)
-  const { data: posts } = useData(() => currentUserPosts(user.$id))
+  const { data: userPosts } = useData(() => currentUserPosts(user.$id))
+  const [posts, setPosts] = useState([]);
 
   console.log("Profle", user)
   console.log("Porfile Posts", posts)
@@ -23,13 +24,45 @@ const Profile = () => {
     router.replace("/sign-in")
   }
 
+  useEffect(() => {
+    setPosts(userPosts)
+  }, [userPosts])
+
+  const handleDelete = (id) => {
+    Alert.alert(
+      'Delete Post',
+      'Are you sure you want to delete this post?',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Delete Canceled'),
+        },
+        {
+          text: 'Delete',
+          onPress: async () => {
+            await deletePost(id)
+            setPosts((prevPosts) => prevPosts.filter((post) => post.$id !== id))
+          },
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+
   return (
     <SafeAreaView className='bg-primary h-full'>
       <FlatList
         data={posts}
         keyExtractor={(item) => item.$id}
         renderItem={({ item }) => (
-          <VideoCard posts={item} />
+          <View>
+            <VideoCard posts={item} />
+            <View className="flex-row mb-4 justify-center gap-4">
+              <TouchableOpacity onPress={() => handleDelete(item.$id)}>
+                <Image source={icons.trash} className="w-8 h-8  bg-red-500 rounded-lg" resizeMode='contain' />
+              </TouchableOpacity>
+            </View>
+          </View>
         )}
         ListHeaderComponent={() => (
           <View className="mb-9">
